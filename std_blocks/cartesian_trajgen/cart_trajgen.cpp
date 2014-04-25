@@ -137,7 +137,8 @@ void cart_trajgen_step(ubx_block_t *b)
 	if (inf->is_moving==0 &&
 	    read_des_pos(inf->ports.des_pos, ((struct kdl_frame*) &inf->target_pos)) == 1 &&
 	    read_msr_pos(inf->ports.msr_pos, ((struct kdl_frame*) &inf->start_pos)) == 1 &&
-	    read_des_dur(inf->ports.des_dur, &des_dur) == 1) {
+	    read_des_dur(inf->ports.des_dur, &des_dur) == 1) 
+	{
 
 #ifdef DEBUG
 		printf("starting new trajectory\n");
@@ -179,14 +180,17 @@ void cart_trajgen_step(ubx_block_t *b)
 	 */
 	if (inf->is_moving==1) {
 		DBG("is_moving == 1, time_passed=%f, max_dur=%f", time_passed, inf->max_duration);
-		if(time_passed > inf->max_duration) {
+		if(time_passed > inf->max_duration) 
+		{
 			DBG("time out: trajectory completed");
 			inf->is_moving=0;
 			cmd_pos = inf->target_pos;
 			KDL::SetToZero(cmd_twist);
 			tmp=1;
 			write_reached(inf->ports.reached, &tmp);
-		} else {
+		} 
+		else 
+		{
 			/* position */
 			diff_vel = KDL::Twist( KDL::Vector( inf->motion_profile[0][0].Pos(time_passed),
 							    inf->motion_profile[0][1].Pos(time_passed),

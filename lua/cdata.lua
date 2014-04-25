@@ -35,7 +35,7 @@ M.struct2tab={}
 
 M.struct2tab['struct ubx_block']=function(b) return ffi.string(b.name) end
 
-local num_format_spec="%.3f"
+local num_format_spec="%.7f"
 
 --- Convert a FFI cdata to a Lua table.
 -- @param cd FFI cdata to convert Lua

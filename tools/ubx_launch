@@ -3,4 +3,4 @@
 SCRIPT=$(readlink -f $0)
 SCRIPTPATH=`dirname $SCRIPT`
 
-env luajit -i $SCRIPTPATH/ubx_launch.lua $@
+rlwrap luajit -i $SCRIPTPATH/ubx_launch.lua $@

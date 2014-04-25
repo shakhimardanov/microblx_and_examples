@@ -315,7 +315,7 @@ assert(ubx.block_init(youbot1)==0)
 nr_arms=ubx.data_tolua(ubx.config_get_data(youbot1, "nr_arms"))
 
 assert(ubx.block_start(webif1)==0)
-assert(ubx.block_start(file_log1)==0)
+--assert(ubx.block_start(file_log1)==0)
 assert(ubx.block_start(youbot1)==0)
 assert(ubx.block_start(ptrig1)==0)
 
