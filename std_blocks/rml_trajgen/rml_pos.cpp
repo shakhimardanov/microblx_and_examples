@@ -99,7 +99,7 @@ int rml_pos_start(ubx_block_t *b)
 
 	DBG("setting max_acc: [%f, %f, %f, %f, %f]",
 	    inf->IP->MaxAccelerationVector->VecData[0],
-	    inf->IP->MaxAccelerationVector->VecData[1],
+	    inf->IP->MaxAccelerationVector->VecData[1], 
 	    inf->IP->MaxAccelerationVector->VecData[2],
 	    inf->IP->MaxAccelerationVector->VecData[3],
 	    inf->IP->MaxAccelerationVector->VecData[4]);
@@ -113,6 +113,17 @@ int rml_pos_start(ubx_block_t *b)
 		inf->IP->CurrentAccelerationVector->VecData[i]=0;
 	}
 
+	// inf->IP->TargetPositionVector->VecData[0] = 1.0;
+	// inf->IP->TargetPositionVector->VecData[1] = 0.3;
+	// inf->IP->TargetPositionVector->VecData[2] = 0.0;
+	// inf->IP->TargetPositionVector->VecData[3] = 0.0;
+	// inf->IP->TargetPositionVector->VecData[4] = 0.0;
+
+	// inf->IP->TargetVelocityVector->VecData[0] = 0;
+	// inf->IP->TargetVelocityVector->VecData[1] = 0;
+	// inf->IP->TargetVelocityVector->VecData[2] = 0;
+	// inf->IP->TargetVelocityVector->VecData[3] = 0;
+	// inf->IP->TargetVelocityVector->VecData[4] = 0;
 	ret = 0;
  out:
 	return ret;
@@ -147,7 +158,7 @@ void rml_pos_step(ubx_block_t *b)
 
 	struct rml_pos_info *inf = (struct rml_pos_info*) b->private_data;
 
-	/* new target pos? */
+	// /* new target pos? */
 	sz_des_pos = read_des_pos_5(inf->ports.des_pos, &tmparr);
 	if(sz_des_pos == 5) {
 		i=0; /* reuse i to emit "reached" event */
@@ -162,7 +173,7 @@ void rml_pos_step(ubx_block_t *b)
 		    inf->IP->TargetPositionVector->VecData[4]);
 	}
 
-	/* new target vel? */
+	// /* new target vel? */
 	sz_des_vel = read_des_vel_5(inf->ports.des_vel, &tmparr);
 	if(sz_des_vel == 5) {
 		i=0; /* reuse i to emit "reached" event */
@@ -214,36 +225,36 @@ void rml_pos_step(ubx_block_t *b)
 	res = inf->RML->RMLPosition(*inf->IP, inf->OP, inf->Flags);
 
 	switch (res) {
-	case ReflexxesAPI::RML_WORKING:
-		break;
-	case ReflexxesAPI::RML_FINAL_STATE_REACHED:
-		i=1; /* reuse i to emit "reached" event */
-		write_reached(inf->ports.reached, &i);
-		break;
-	case ReflexxesAPI::RML_ERROR_INVALID_INPUT_VALUES:
-		ERR("RML_ERROR_INVALID_INPUT_VALUES");
-		goto out_err;
-	case ReflexxesAPI::RML_ERROR_EXECUTION_TIME_CALCULATION:
-		ERR("RML_ERROR_EXECUTION_TIME_CALCULATION");
-		goto out_err;
-	case ReflexxesAPI::RML_ERROR_SYNCHRONIZATION:
-		ERR("RML_ERROR_SYNCHRONIZATION");
-		goto out_err;
-	case ReflexxesAPI::RML_ERROR_NUMBER_OF_DOFS:
-		ERR("RML_ERROR_NUMBER_OF_DOFS");
-		goto out_err;
-	case ReflexxesAPI::RML_ERROR_NO_PHASE_SYNCHRONIZATION:
-		ERR("RML_ERROR_NO_PHASE_SYNCHRONIZATION");
-		goto out_err;
-	case ReflexxesAPI::RML_ERROR_NULL_POINTER:
-		ERR("RML_ERROR_NULL_POINTER");
-		goto out_err;
-	case ReflexxesAPI::RML_ERROR_EXECUTION_TIME_TOO_BIG:
-		ERR("RML_ERROR_EXECUTION_TIME_TOO_BIG");
-		goto out_err;
-	default:
-		ERR("unkown error");
-		goto out_err;
+		case ReflexxesAPI::RML_WORKING:
+			break;
+		case ReflexxesAPI::RML_FINAL_STATE_REACHED:
+			i=1; /* reuse i to emit "reached" event */
+			write_reached(inf->ports.reached, &i);
+			break;
+		case ReflexxesAPI::RML_ERROR_INVALID_INPUT_VALUES:
+			ERR("RML_ERROR_INVALID_INPUT_VALUES");
+			goto out_err;
+		case ReflexxesAPI::RML_ERROR_EXECUTION_TIME_CALCULATION:
+			ERR("RML_ERROR_EXECUTION_TIME_CALCULATION");
+			goto out_err;
+		case ReflexxesAPI::RML_ERROR_SYNCHRONIZATION:
+			ERR("RML_ERROR_SYNCHRONIZATION");
+			goto out_err;
+		case ReflexxesAPI::RML_ERROR_NUMBER_OF_DOFS:
+			ERR("RML_ERROR_NUMBER_OF_DOFS");
+			goto out_err;
+		case ReflexxesAPI::RML_ERROR_NO_PHASE_SYNCHRONIZATION:
+			ERR("RML_ERROR_NO_PHASE_SYNCHRONIZATION");
+			goto out_err;
+		case ReflexxesAPI::RML_ERROR_NULL_POINTER:
+			ERR("RML_ERROR_NULL_POINTER");
+			goto out_err;
+		case ReflexxesAPI::RML_ERROR_EXECUTION_TIME_TOO_BIG:
+			ERR("RML_ERROR_EXECUTION_TIME_TOO_BIG");
+			goto out_err;
+		default:
+			ERR("unkown error");
+			goto out_err;
 	}
 
 	memcpy(cmd_pos, inf->OP->NewPositionVector->VecData, sizeof(cmd_pos));

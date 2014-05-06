@@ -177,6 +177,8 @@ function init()
    ni:b("forward_twist_kin1"):do_init()
    ni:b("forward_acctwist_kin1"):do_init()
    ni:b("wrenchprojection1"):do_init()
+   ni:b("joint_trajectory_gen"):do_init()
+   ni:b("computed_torque_controller"):do_init()
    ni:b("logger1"):do_start()
    ni:b("ybdrv"):do_start()
    ni:b("compute_scheduler"):do_start()
@@ -196,10 +198,12 @@ end
 
 function start_all()
    ni:b("logging_scheduler"):do_start()
+   ni:b("joint_trajectory_gen"):do_start()
    ni:b("forward_pose_kin1"):do_start()
    ni:b("forward_twist_kin1"):do_start()
    ni:b("forward_acctwist_kin1"):do_start()
    ni:b("wrenchprojection1"):do_start()
+   ni:b("computed_torque_controller"):do_start()
 
 end
 
@@ -243,15 +247,19 @@ end
 
 logger_report_conf = [[
 { 
+   { blockname='ybdrv', portname="arm1_msr_pos", buff_len=3 },
    ---{ blockname='ybdrv', portname="arm1_msr_vel", buff_len=3 },
-   ---{ blockname='ybdrv', portname="arm1_msr_pos", buff_len=3 },
    ---{ blockname='forward_pose_kin1', portname="output_link_poses", buff_len=3},
    ---{ blockname='forward_pose_kin1', portname="output_ee_pose", buff_len=3 },
    ---{ blockname='forward_twist_kin1', portname="output_ee_twist", buff_len=3},
    ---{ blockname='forward_twist_kin1', portname="output_joint_twists", buff_len=3},
    ---{ blockname='forward_twist_kin1', portname="output_link_unit_twists", buff_len=3},
    ---{ blockname='forward_acctwist_kin1', portname="output_link_acctwists", buff_len=3},
-   { blockname='wrenchprojection1', portname="output_joint_torques", buff_len=3},
+   { blockname='joint_trajectory_gen', portname="cmd_pos", buff_len=3},
+   { blockname='joint_trajectory_gen', portname="cmd_vel", buff_len=3},
+   ---{ blockname='computed_torque_controller', portname="output_des_joint_acc", buff_len=3},
+   ---{ blockname='wrenchprojection1', portname="output_joint_torques", buff_len=3},
+   
 }
 
 ]]
@@ -271,6 +279,9 @@ return bd.system
       "std_blocks/twistkinematics/forward_twist_kin.so",
       "std_blocks/acctwistkinematics/forward_acctwist_kin.so",
       "std_blocks/wrenchprojection/wrenchprojection.so",
+      "std_blocks/cartesian_trajgen/cart_trajgen.so",
+      "std_blocks/rml_trajgen/rml_pos.so",
+      "std_blocks/joint_imped_controller/joint_imped_controller.so",
    },
 
    blocks = {
@@ -282,24 +293,38 @@ return bd.system
       { name="forward_twist_kin1", type="forward_twist_kin" },
       { name="forward_acctwist_kin1", type="forward_acctwist_kin" },
       { name="wrenchprojection1", type="wrenchprojection" },
+      { name="cart_trajectory_gen", type="cart_trajgen" },
+      { name="joint_trajectory_gen", type="rml_pos" },
+      { name="computed_torque_controller", type="joint_imped_controller" },
    },
 
    connections = {
       {src="ybdrv.arm1_msr_pos", tgt="forward_pose_kin1.input_joint_poses"},
       {src="ybdrv.arm1_msr_pos", tgt="forward_twist_kin1.input_joint_poses"},
+      {src="ybdrv.arm1_msr_pos", tgt="joint_trajectory_gen.msr_pos"},
+      {src="ybdrv.arm1_msr_pos", tgt="computed_torque_controller.input_msr_joint_poses"},
       {src="ybdrv.arm1_msr_vel", tgt="forward_twist_kin1.input_joint_twists"},
+      {src="ybdrv.arm1_msr_vel", tgt="joint_trajectory_gen.msr_vel"},
+      {src="ybdrv.arm1_msr_vel", tgt="computed_torque_controller.input_msr_joint_rates"},
       {src="forward_pose_kin1.output_link_poses", tgt="forward_twist_kin1.input_link_poses"},
+
       ---forward acctwist connections
       {src="forward_pose_kin1.output_link_poses", tgt="forward_acctwist_kin1.input_link_poses"},
       {src="forward_twist_kin1.output_link_twists", tgt="forward_acctwist_kin1.input_link_twists"},
       {src="forward_twist_kin1.output_joint_twists", tgt="forward_acctwist_kin1.input_joint_twists"},
       {src="forward_twist_kin1.output_link_unit_twists", tgt="forward_acctwist_kin1.input_link_unit_twists"},
+
       ---wrenchprojection connections
       {src="forward_pose_kin1.output_link_poses", tgt="wrenchprojection1.input_link_poses"},
       {src="forward_pose_kin1.output_ee_pose", tgt="wrenchprojection1.input_ee_pose"},
       {src="forward_twist_kin1.output_link_unit_twists", tgt="wrenchprojection1.input_link_unit_twists"},
       {src="forward_twist_kin1.output_link_twists", tgt="wrenchprojection1.input_link_twists"},
       {src="forward_acctwist_kin1.output_link_acctwists", tgt="wrenchprojection1.input_link_acctwists"},
+      
+      ---controller and trajectory gen connections
+      {src="joint_trajectory_gen.cmd_pos", tgt="computed_torque_controller.input_des_joint_poses"},
+      {src="joint_trajectory_gen.cmd_vel", tgt="computed_torque_controller.input_des_joint_rates"},
+      {src="computed_torque_controller.output_des_joint_acc", tgt="forward_acctwist_kin1.input_joint_acctwists"},
       ---robot and algorithm connections
       ---{src="wrenchprojection1.output_joint_torques", tgt="ybdrv.arm1_cmd_eff"},
 
@@ -311,6 +336,11 @@ return bd.system
       { name="forward_acctwist_kin1", config = {
                root_link_acctwist = {vel={x=0.0, y=0.0, z=9.81}, rot={x=0.0, y=0.0, z=0.0} }, }
       },
+      { name="cart_trajectory_gen", config = { max_vel={vel={x=0.0, y=0.0, z=0.0}, rot={x=0.0, y=0.0, z=0.0} }, 
+                                               max_acc={vel={x=0.0, y=0.0, z=9.81}, rot={x=0.0, y=0.0, z=0.0} }}
+      },
+      { name="joint_trajectory_gen", config = {max_vel={0.2, 0.2, 0.2, 0.2, 0.2}, max_acc={0.05, 0.05, 0.05, 0.05, 0.05}, cycle_time=0.01}},
+      { name="computed_torque_controller", config = {number_of_axis = 5, stiffness={20, 10, 0, 0, 0}, damping={0, 0, 0, 0, 0} }},
       { name="compute_scheduler", config = { period = {sec=0, usec=1000 }, sched_policy="SCHED_FIFO",
                sched_priority=80, trig_blocks={ 
                { b="#ybdrv", num_steps=1, measure=0 }, 
@@ -318,6 +348,8 @@ return bd.system
       { name="logging_scheduler", config = { period = {sec=0, usec=10000 }, sched_policy="SCHED_FIFO",
                 sched_priority=80, trig_blocks={ 
                { b="#logger1", num_steps=1, measure=0 }, 
+               { b="#joint_trajectory_gen", num_steps=1, measure=0 }, 
+               { b="#computed_torque_controller", num_steps=1, measure=0 }, 
                { b="#forward_pose_kin1", num_steps=1, measure=0 },
                { b="#forward_twist_kin1", num_steps=1, measure=0 },
                { b="#forward_acctwist_kin1", num_steps=1, measure=0 },

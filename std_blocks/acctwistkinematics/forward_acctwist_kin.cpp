@@ -96,12 +96,12 @@ void forward_acctwist_kin_step(ubx_block_t *b)
 	KDL::Twist *rootAcc;
 	rootAcc = (KDL::Twist*) ubx_config_get_data_ptr(b, "root_link_acctwist", &len);
 	if(	
-		// (read_joint_acctwists(inf->ports.input_joint_acctwists, &desiredJointAcc) > 0) && 
-		(read_link_poses(inf->ports.input_link_poses, &updatedLinkPoses) > 0 )
-		&& (read_link_twists(inf->ports.input_link_twists,&updatedLinkTwists) > 0)
-		&& (read_joint_twists(inf->ports.input_joint_twists, &updatedVjTwists) > 0)
-		&& (read_link_unit_twists(inf->ports.input_link_unit_twists,&updatedLinkUnitTwists) > 0)
-		)
+		(read_joint_acctwists(inf->ports.input_joint_acctwists, &desiredJointAcc) > 0) && 
+		(read_link_poses(inf->ports.input_link_poses, &updatedLinkPoses) > 0 ) &&
+		(read_link_twists(inf->ports.input_link_twists,&updatedLinkTwists) > 0) &&
+		(read_joint_twists(inf->ports.input_joint_twists, &updatedVjTwists) > 0) &&
+		(read_link_unit_twists(inf->ports.input_link_unit_twists,&updatedLinkUnitTwists) > 0)
+	 )
 	{
 		for(unsigned int i=0; i<NR_OF_JOINTS; i++)
 		{
