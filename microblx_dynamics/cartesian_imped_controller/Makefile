@@ -5,9 +5,9 @@ CFLAGS:=$(CFLAGS) -Wno-unused-function
 
 UBX_DIR=$(ROOT_DIR)/src/
 EIGEN_DIR=/usr/include/eigen3/
-CUSTOM_TYPES=$(ROOT_DIR)/std_blocks/cartesian_imped_controller/types/
+CUSTOM_TYPES=$(ROOT_DIR)/microblx_dynamics/cartesian_imped_controller/types/
 KDL_TYPES=$(ROOT_DIR)/std_types/kdl/types/
-YOUBOT_DRIVER_DIR=$(ROOT_DIR)/std_blocks/youbot_driver/types/
+YOUBOT_DRIVER_DIR=$(ROOT_DIR)/microblx_dynamics/youbot_driver/types/
 KDL_PARSER=/opt/ros/groovy/include
 KDL_PARSER_LIB=/opt/ros/groovy/lib
 HAVE_KDL=/opt/ros/groovy/stacks/orocos_kinematics_dynamics/orocos_kdl/install_dir

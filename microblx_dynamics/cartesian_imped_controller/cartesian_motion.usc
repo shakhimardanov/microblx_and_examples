@@ -178,7 +178,7 @@ function init()
    ni:b("forward_acctwist_kin1"):do_init()
    ni:b("wrenchprojection1"):do_init()
    ni:b("joint_trajectory_gen"):do_init()
-   ni:b("computed_torque_controller"):do_init()
+   ni:b("cart_imped_cont"):do_init()
    ni:b("logger1"):do_start()
    ni:b("ybdrv"):do_start()
    ni:b("compute_scheduler"):do_start()
@@ -203,7 +203,7 @@ function start_all()
    ni:b("forward_twist_kin1"):do_start()
    ni:b("forward_acctwist_kin1"):do_start()
    ni:b("wrenchprojection1"):do_start()
-   ni:b("computed_torque_controller"):do_start()
+   ni:b("cart_imped_cont"):do_start()
 
 end
 
@@ -257,7 +257,7 @@ logger_report_conf = [[
    ---{ blockname='forward_acctwist_kin1', portname="output_link_acctwists", buff_len=3},
    { blockname='joint_trajectory_gen', portname="cmd_pos", buff_len=3},
    { blockname='joint_trajectory_gen', portname="cmd_vel", buff_len=3},
-   ---{ blockname='computed_torque_controller', portname="output_des_joint_acc", buff_len=3},
+   ---{ blockname='cart_imped_cont', portname="output_des_joint_acc", buff_len=3},
    { blockname='wrenchprojection1', portname="output_joint_torques", buff_len=3},
    
 }
@@ -271,16 +271,16 @@ return bd.system
    imports = {
       "std_types/stdtypes/stdtypes.so",
       "std_types/kdl/kdl_types.so",
-      "std_blocks/youbot_driver/youbot_driver.so",
+      "microblx_dynamics/youbot_driver/youbot_driver.so",
       "std_blocks/ptrig/ptrig.so",
       "std_blocks/lfds_buffers/lfds_cyclic.so",
       "std_blocks/logging/file_logger.so",
-      "std_blocks/posekinematics/forward_pose_kin.so",
-      "std_blocks/twistkinematics/forward_twist_kin.so",
-      "std_blocks/acctwistkinematics/forward_acctwist_kin.so",
-      "std_blocks/wrenchprojection/wrenchprojection.so",
-      "std_blocks/cartesian_trajgen/cart_trajgen.so",
-      "std_blocks/cartesian_imped_controller/cart_imp_cont.so",
+      "microblx_dynamics/posekinematics/forward_pose_kin.so",
+      "microblx_dynamics/twistkinematics/forward_twist_kin.so",
+      "microblx_dynamics/acctwistkinematics/forward_acctwist_kin.so",
+      "microblx_dynamics/wrenchprojection/wrenchprojection.so",
+      "microblx_dynamics/cartesian_trajgen/cart_trajgen.so",
+      "microblx_dynamics/cartesian_imped_controller/cart_imp_cont.so",
    },
 
    blocks = {
@@ -293,7 +293,7 @@ return bd.system
       { name="forward_acctwist_kin1", type="forward_acctwist_kin" },
       { name="wrenchprojection1", type="wrenchprojection" },
       { name="cart_trajectory_gen", type="cart_trajgen" },
-      { name="cart_imped_cont", type="cart_imp_cont" },
+      { name="cart_imped_cont", type="cart_imp_controller" },
    },
 
    connections = {
@@ -316,9 +316,9 @@ return bd.system
       {src="forward_acctwist_kin1.output_link_acctwists", tgt="wrenchprojection1.input_link_acctwists"},
       
       ---controller and trajectory gen connections
-      {src="cart_trajectory_gen.cmd_pos", tgt="computed_torque_controller.input_des_joint_poses"},
-      {src="cart_trajectory_gen.cmd_vel", tgt="computed_torque_controller.input_des_joint_rates"},
-      {src="computed_torque_controller.output_des_joint_acc", tgt="forward_acctwist_kin1.input_joint_acctwists"},
+      ---{src="cart_trajectory_gen.cmd_pos", tgt="cart_imped_cont.input_des_joint_poses"},
+      ---{src="cart_trajectory_gen.cmd_vel", tgt="cart_imped_cont.input_des_joint_rates"},
+      ---{src="cart_imped_cont.output_des_joint_acc", tgt="forward_acctwist_kin1.input_joint_acctwists"},
       ---robot and algorithm connections
       {src="wrenchprojection1.output_joint_torques", tgt="ybdrv.arm1_cmd_eff"},
 
@@ -333,7 +333,7 @@ return bd.system
       { name="cart_trajectory_gen", config = { max_vel={vel={x=0.0, y=0.0, z=0.0}, rot={x=0.0, y=0.0, z=0.0} }, 
                                                max_acc={vel={x=0.0, y=0.0, z=9.81}, rot={x=0.0, y=0.0, z=0.0} }}
       },
-      { name="cart_imped_cont", config = {number_of_axis = 5, stiffness={100, 0, 0, 0, 0}, damping={0, 0, 0, 0, 0} }},
+      { name="cart_imped_cont", config = {stiffness={100, 0, 0, 0, 0, 0}, damping={0, 0, 0, 0, 0, 0} }},
       { name="compute_scheduler", config = { period = {sec=0, usec=1000 }, sched_policy="SCHED_FIFO",
                sched_priority=80, trig_blocks={ 
                { b="#ybdrv", num_steps=1, measure=0 }, 

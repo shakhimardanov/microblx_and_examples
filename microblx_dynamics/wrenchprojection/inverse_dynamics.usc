@@ -263,14 +263,14 @@ return bd.system
    imports = {
       "std_types/stdtypes/stdtypes.so",
       "std_types/kdl/kdl_types.so",
-      "std_blocks/youbot_driver/youbot_driver.so",
+      "microblx_dynamics/youbot_driver/youbot_driver.so",
       "std_blocks/ptrig/ptrig.so",
       "std_blocks/lfds_buffers/lfds_cyclic.so",
       "std_blocks/logging/file_logger.so",
-      "std_blocks/posekinematics/forward_pose_kin.so",
-      "std_blocks/twistkinematics/forward_twist_kin.so",
-      "std_blocks/acctwistkinematics/forward_acctwist_kin.so",
-      "std_blocks/wrenchprojection/wrenchprojection.so",
+      "microblx_dynamics/posekinematics/forward_pose_kin.so",
+      "microblx_dynamics/twistkinematics/forward_twist_kin.so",
+      "microblx_dynamics/acctwistkinematics/forward_acctwist_kin.so",
+      "microblx_dynamics/wrenchprojection/wrenchprojection.so",
    },
 
    blocks = {

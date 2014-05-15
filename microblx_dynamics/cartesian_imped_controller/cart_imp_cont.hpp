@@ -26,6 +26,8 @@ char cart_imp_controller_meta[] =
 /* declaration of block configuration */
 ubx_config_t cart_imp_controller_config[] = {
 	{ .name="robot_structural_model", .type_name = "char", .doc="file containing urdf model of a robot " },
+	{ .name="stiffness", .type_name = "double", .value = { .len = 6}, .doc="" },
+	{ .name="damping", .type_name = "double", .value = { .len = 6}, .doc="" },
 	{ NULL },
 };
 
