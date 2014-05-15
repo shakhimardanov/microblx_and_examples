@@ -3,9 +3,9 @@
 #include "joint_imped_controller.hpp"
 
 using namespace KDL;
-/* edit and uncomment this:
- * UBX_MODULE_LICENSE_SPDX(GPL-2.0+)
- */
+ // edit and uncomment this:
+ UBX_MODULE_LICENSE_SPDX(GPL-2.0+)
+ 
 
 /* define a structure for holding the block local state. By assigning an
  * instance of this struct to the block private_data pointer (see init), this
@@ -36,8 +36,6 @@ int joint_imped_controller_init(ubx_block_t *b)
 	}
 	b->private_data=inf;
 	
-	inf->joint_pose_errs = new JntArray(NR_OF_JOINTS);
-	inf->joint_rate_errs = new JntArray(NR_OF_JOINTS);
 	update_port_cache(b, &inf->ports);
 	ret=0;
 out:

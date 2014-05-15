@@ -1,9 +1,9 @@
 #define DEBUG 1
 #include "forward_pose_kin.hpp"
 
-/* edit and uncomment this:
- * UBX_MODULE_LICENSE_SPDX(GPL-2.0+)
- */
+ // edit and uncomment this:
+ UBX_MODULE_LICENSE_SPDX(GPL-2.0+)
+ 
 
 using namespace KDL;
 

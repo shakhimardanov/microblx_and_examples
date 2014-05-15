@@ -3,9 +3,9 @@
 #include "cart_imp_cont.hpp"
 
 using namespace KDL;
-/* edit and uncomment this:
- * UBX_MODULE_LICENSE_SPDX(GPL-2.0+)
- */
+ // edit and uncomment this:
+UBX_MODULE_LICENSE_SPDX(GPL-2.0+)
+ 
 
 /* define a structure for holding the block local state. By assigning an
  * instance of this struct to the block private_data pointer (see init), this
@@ -62,39 +62,39 @@ void cart_imp_controller_cleanup(ubx_block_t *b)
 /* step */
 void cart_imp_controller_step(ubx_block_t *b)
 {
-	struct cart_imp_controller_info *inf = (struct cart_imp_controller_info*) b->private_data;
+	// struct cart_imp_controller_info *inf = (struct cart_imp_controller_info*) b->private_data;
 
-	struct kdl_twist updatedLinkAccTwists[NR_OF_JOINTS];
-	struct kdl_twist updatedLinkTwists[NR_OF_JOINTS];
-	struct kdl_twist updatedLinkUnitTwists[NR_OF_JOINTS];
-	struct kdl_frame updatedLinkPoses[NR_OF_JOINTS];
-	struct kdl_frame updatedEEPose;
+	// struct kdl_twist updatedLinkAccTwists[NR_OF_JOINTS];
+	// struct kdl_twist updatedLinkTwists[NR_OF_JOINTS];
+	// struct kdl_twist updatedLinkUnitTwists[NR_OF_JOINTS];
+	// struct kdl_frame updatedLinkPoses[NR_OF_JOINTS];
+	// struct kdl_frame updatedEEPose;
 	
-	double outUBXJointTorques[NR_OF_JOINTS] = {0,0,0,0,0} ;
+	// double outUBXJointTorques[NR_OF_JOINTS] = {0,0,0,0,0} ;
 	
-	if(	(read_ee_pose(inf->ports.input_ee_pose, &updatedEEPose) > 0 )
-		&& (read_link_twists(inf->ports.input_link_twists,&updatedLinkTwists) > 0)
-		&& (read_link_acctwists(inf->ports.input_link_acctwists, &updatedLinkAccTwists) > 0)
-		)
-	{
-		for(unsigned int i=0; i<NR_OF_JOINTS; i++)
-		{
+	// if(	(read_ee_pose(inf->ports.input_ee_pose, &updatedEEPose) > 0 )
+	// 	&& (read_link_twists(inf->ports.input_link_twists,&updatedLinkTwists) > 0)
+	// 	&& (read_link_acctwists(inf->ports.input_link_acctwists, &updatedLinkAccTwists) > 0)
+	// 	)
+	// {
+	// 	for(unsigned int i=0; i<NR_OF_JOINTS; i++)
+	// 	{
 
-		}
-	}	
+	// 	}
+	// }	
 
-	if(	(read_link_poses(inf->ports.input_link_poses, &updatedLinkPoses) > 0 )
-			&& (read_link_unit_twists(inf->ports.input_link_unit_twists,&updatedLinkUnitTwists) > 0)
-	  )
-	{
-        //Inward sweep
-		for(int i=(NR_OF_JOINTS-1); i>=0; i--)
-		{
+	// if(	(read_link_poses(inf->ports.input_link_poses, &updatedLinkPoses) > 0 )
+	// 		&& (read_link_unit_twists(inf->ports.input_link_unit_twists,&updatedLinkUnitTwists) > 0)
+	//   )
+	// {
+ //        //Inward sweep
+	// 	for(int i=(NR_OF_JOINTS-1); i>=0; i--)
+	// 	{
 
-		}
+	// 	}
 
-	}
-	write_joint_torques(inf->ports.output_joint_torques, &outUBXJointTorques);
+	// }
+	// write_joint_torques(inf->ports.output_joint_torques, &outUBXJointTorques);
 
 	
 }

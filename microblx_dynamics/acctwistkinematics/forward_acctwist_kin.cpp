@@ -3,9 +3,9 @@
 #include "forward_acctwist_kin.hpp"
 
 using namespace KDL;
-/* edit and uncomment this:
- * UBX_MODULE_LICENSE_SPDX(GPL-2.0+)
- */
+ // edit and uncomment this:
+UBX_MODULE_LICENSE_SPDX(GPL-2.0+)
+ 
 
 /* define a structure for holding the block local state. By assigning an
  * instance of this struct to the block private_data pointer (see init), this

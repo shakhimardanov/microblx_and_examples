@@ -301,7 +301,7 @@ return bd.system
       {src="forward_twist_kin1.output_link_twists", tgt="wrenchprojection1.input_link_twists"},
       {src="forward_acctwist_kin1.output_link_acctwists", tgt="wrenchprojection1.input_link_acctwists"},
       ---robot and algorithm connections
-      ---{src="wrenchprojection1.output_joint_torques", tgt="ybdrv.arm1_cmd_eff"},
+      {src="wrenchprojection1.output_joint_torques", tgt="ybdrv.arm1_cmd_eff"},
 
    },
 

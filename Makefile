@@ -1,7 +1,7 @@
 include make.conf
 
 INCLUDE_DIR=$(CURDIR)/src/
-DIRS=src $(wildcard std_blocks/* std_types/* examples)
+DIRS=src $(wildcard std_blocks/* std_types/* examples microblx_dynamics/*)
 
 SHELL = /bin/sh
 INSTALL = /usr/bin/install
